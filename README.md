@@ -1,4 +1,4 @@
 redis-dash
 ==========
 
-Dash docset for Redis
+Dash docset (http://kapeli.com/dash/) for Redis (http://redis.io/)
