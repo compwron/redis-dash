@@ -3,7 +3,6 @@
 import os, re, sqlite3
 from bs4 import BeautifulSoup, NavigableString, Tag 
 
-docpaths = ['redis.docset/Contents/Resources/Documents/commands', 'redis.docset/Contents/Resources/Documents/topics'] 
 db = sqlite3.connect('redis.docset/Contents/Resources/docSet.dsidx')
 cur = db.cursor()
 
@@ -11,6 +10,8 @@ try: cur.execute('DROP TABLE searchIndex;')
 except: pass
 cur.execute('CREATE TABLE searchIndex(id INTEGER PRIMARY KEY, name TEXT, type TEXT, path TEXT);')
 cur.execute('CREATE UNIQUE INDEX anchor ON searchIndex (name, type, path);')
+
+docpaths = ['redis.docset/Contents/Resources/Documents/commands', 'redis.docset/Contents/Resources/Documents/topics'] 
 
 for docpath in docpaths:
     for fn in os.listdir(docpath):
