@@ -1,0 +1,21 @@
+<p>Sets <code>field</code> in the hash stored at <code>key</code> to <code>value</code>, only if <code>field</code> does not
+yet exist. If <code>key</code> does not exist, a new key holding a hash is created. If
+<code>field</code> already exists, this operation has no effect.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if <code>field</code> is a new field in the hash and <code>value</code> was set.</li>
+<li><code>0</code> if <code>field</code> already exists in the hash and no operation was performed.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+HSETNX myhash field "Hello"
+HSETNX myhash field "World"
+HGET myhash field
+</code></pre>

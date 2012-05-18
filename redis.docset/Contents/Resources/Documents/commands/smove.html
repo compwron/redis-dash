@@ -1,0 +1,32 @@
+<p>Move <code>member</code> from the set at <code>source</code> to the set at <code>destination</code>. This
+operation is atomic. In every given moment the element will appear to be a
+member of <code>source</code> <strong>or</strong> <code>destination</code> for other clients.</p>
+
+<p>If the source set does not exist or does not contain the specified element, no
+operation is performed and <code>0</code> is returned. Otherwise, the element is removed
+from the source set and added to the destination set. When the specified
+element already exists in the destination set, it is only removed from the
+source set.</p>
+
+<p>An error is returned if <code>source</code> or <code>destination</code> does not hold a set value.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if the element is moved.</li>
+<li><code>0</code> if the element is not a member of <code>source</code> and no operation was performed.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "one"
+SADD myset "two"
+SADD myotherset "three"
+SMOVE myset myotherset "two"
+SMEMBERS myset
+SMEMBERS myotherset
+</code></pre>

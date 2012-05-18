@@ -1,0 +1,18 @@
+<p>Returns information about the existence of the scripts in the script cache.</p>
+
+<p>This command accepts one or more SHA1 sums and returns a list of ones or zeros to signal if the scripts are already defined or not inside the script cache.
+This can be useful before a pipelining operation to ensure that scripts are loaded (and if not, to load them using <code>SCRIPT LOAD</code>) so that the pipelining operation can be performed solely using <code>EVALSHA</code> instead of <code>EVAL</code> to save bandwidth.</p>
+
+<p>Plase check the <code>EVAL</code> page for detailed information about how Redis Lua scripting works.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply
+The command returns an array of integers that correspond to the specified SHA1 sum arguments. For every corresponding SHA1 sum of a script that actually exists in the script cache, an 1 is returned, otherwise 0 is returned.</p>
+
+<p>@example</p>
+
+<pre><code>@cli
+SCRIPT LOAD "return 1"
+SCRIPT EXISTS e0e1f9fabfc9d4800c877a703b823ac0578ff8db ffffffffffffffffffffffffffffffffffffffff
+</code></pre>

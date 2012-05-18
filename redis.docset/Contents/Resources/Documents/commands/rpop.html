@@ -1,0 +1,15 @@
+<p>Removes and returns the last element of the list stored at <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the value of the last element, or <code>nil</code> when <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+RPUSH mylist "one"
+RPUSH mylist "two"
+RPUSH mylist "three"
+RPOP mylist
+LRANGE mylist 0 -1
+</code></pre>

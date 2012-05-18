@@ -1,0 +1,23 @@
+<p>@complexity</p>
+
+<p>O(1)</p>
+
+<p>This command works exactly like <code>EXPIRE</code> but the time to live of the key is
+specified in milliseconds instead of seconds.</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if the timeout was set.</li>
+<li><code>0</code> if <code>key</code> does not exist or the timeout could not be set.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+PEXPIRE mykey 1500
+TTL mykey
+PTTL mykey
+</code></pre>

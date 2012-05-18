@@ -1,0 +1,54 @@
+<p>Returns all the elements in the sorted set at <code>key</code> with a score between <code>min</code>
+and <code>max</code> (including elements with score equal to <code>min</code> or <code>max</code>). The
+elements are considered to be ordered from low to high scores.</p>
+
+<p>The elements having the same score are returned in lexicographical order (this
+follows from a property of the sorted set implementation in Redis and does not
+involve further computation).</p>
+
+<p>The optional <code>LIMIT</code> argument can be used to only get a range of the matching
+elements (similar to <em>SELECT LIMIT offset, count</em> in SQL). Keep in mind that if
+<code>offset</code> is large, the sorted set needs to be traversed for <code>offset</code> elements
+before getting to the elements to return, which can add up to O(N) time
+complexity.</p>
+
+<p>The optional <code>WITHSCORES</code> argument makes the command return both the element
+and its score, instead of the element alone. This option is available since
+Redis 2.0.</p>
+
+<h2>Exclusive intervals and infinity</h2>
+
+<p><code>min</code> and <code>max</code> can be <code>-inf</code> and <code>+inf</code>, so that you are not required to know
+the highest or lowest score in the sorted set to get all elements from or up to
+a certain score.</p>
+
+<p>By default, the interval specified by <code>min</code> and <code>max</code> is closed (inclusive).
+It is possible to specify an open interval (exclusive) by prefixing the score
+with the character <code>(</code>. For example:</p>
+
+<pre><code>ZRANGEBYSCORE zset (1 5
+</code></pre>
+
+<p>Will return all elements with <code>1 &lt; score &lt;= 5</code> while:</p>
+
+<pre><code>ZRANGEBYSCORE zset (5 (10
+</code></pre>
+
+<p>Will return all the elements with <code>5 &lt; score &lt; 10</code> (5 and 10 excluded).</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: list of elements in the specified score range (optionally with
+their scores).</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZADD myzset 3 "three"
+ZRANGEBYSCORE myzset -inf +inf
+ZRANGEBYSCORE myzset 1 2
+ZRANGEBYSCORE myzset (1 2
+ZRANGEBYSCORE myzset (1 (2
+</code></pre>

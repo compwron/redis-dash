@@ -1,0 +1,46 @@
+<p>The <code>CONFIG GET</code> command is used to read the configuration parameters of a
+running Redis server. Not all the configuration parameters are
+supported in Redis 2.4, while Redis 2.6 can read the whole configuration of
+a server using this command.</p>
+
+<p>The symmetric command used to alter the configuration at run time is
+<code>CONFIG SET</code>.</p>
+
+<p><code>CONFIG GET</code> takes a single argument, that is glob style pattern. All the
+configuration parameters matching this parameter are reported as a
+list of key-value pairs. Example:</p>
+
+<pre><code>redis&gt; config get *max-*-entries*
+1) "hash-max-zipmap-entries"
+2) "512"
+3) "list-max-ziplist-entries"
+4) "512"
+5) "set-max-intset-entries"
+6) "512"
+</code></pre>
+
+<p>You can obtain a list of all the supported configuration parameters typing
+<code>CONFIG GET *</code> in an open <code>redis-cli</code> prompt.</p>
+
+<p>All the supported parameters have the same meaning of the equivalent
+configuration parameter used in the <a href="http://github.com/antirez/redis/raw/2.2/redis.conf">redis.conf</a> file, with the following important differences:</p>
+
+<ul>
+<li>Where bytes or other quantities are specified, it is not possible to use the redis.conf abbreviated form (10k 2gb ... and so forth), everything should be specified as a well formed 64 bit integer, in the base unit of the configuration directive.</li>
+<li>The save parameter is a single string of space separated integers. Every pair of integers represent a seconds/modifications threshold.</li>
+</ul>
+
+
+<p>For instance what in redis.conf looks like:</p>
+
+<pre><code>save 900 1
+save 300 10
+</code></pre>
+
+<p>that means, save after 900 seconds if there is at least 1 change to the
+dataset, and after 300 seconds if there are at least 10 changes to the
+datasets, will be reported by <code>CONFIG GET</code> as "900 1 300 10".</p>
+
+<p>@return</p>
+
+<p>The return type of the command is a @bulk-reply.</p>

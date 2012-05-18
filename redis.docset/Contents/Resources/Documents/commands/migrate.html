@@ -1,0 +1,26 @@
+<p>Atomically transfer a key from a source Redis instance to a destination Redis instance. On success the key is deleted from the original instance and is guaranteed to exist in the target instance.</p>
+
+<p>The command is atomic and blocks the two instances for the time required to transfer the key, at any given time the key will appear to exist in a given instance or in the other instance, unless a timeout error occurs.</p>
+
+<p>The command internally uses <code>DUMP</code> to generate the serialized version of the key value, and <code>RESTORE</code> in order to synthesize the key in the target instance.
+The source instance acts as a client for the target instance. If the target instance returns OK to the <code>RESTORE</code> command, the source instance deletes the key using <code>DEL</code>.</p>
+
+<p>The timeout specifies the maximum idle time in any moment of the communication with the destination instance in milliseconds. This means that the operation does not need to be completed within the specified amount of milliseconds, but that the transfer should make progresses without blocking for more than the specified amount of milliseconds.</p>
+
+<p><code>MIGRATE</code> needs to perform I/O operations and to honour the specified timeout. When there is an I/O error during the transfer or if the timeout is reached the operation is aborted and the special error -IOERR returned. When this happens the following two cases are possible:</p>
+
+<ul>
+<li>The key may be on both the instances.</li>
+<li>The key may be only in the source instance.</li>
+</ul>
+
+
+<p>It is not possible for the key to get lost in the event of a timeout, but the client calling <code>MIGRATE</code>, in the event of a timeout error, should check if the key is <em>also</em> present in the target instance and act accordingly.</p>
+
+<p>When any other error is returned (startign with "ERR") <code>MIGRATE</code> guarantees that the key is still only present in the originating instance (unless a key with the same name was also <em>already</em> present on the target instance).</p>
+
+<p>On success OK is returned.</p>
+
+<p>@return</p>
+
+<p>@status-reply: The command returns OK on success.</p>

@@ -1,0 +1,17 @@
+<p>Inserts <code>value</code> at the head of the list stored at <code>key</code>, only if <code>key</code>
+already exists and holds a list. In contrary to <code>LPUSH</code>, no operation will
+be performed when <code>key</code> does not yet exist.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the length of the list after the push operation.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+LPUSH mylist "World"
+LPUSHX mylist "Hello"
+LPUSHX myotherlist "Hello"
+LRANGE mylist 0 -1
+LRANGE myotherlist 0 -1
+</code></pre>

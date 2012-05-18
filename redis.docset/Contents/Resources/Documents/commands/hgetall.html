@@ -1,0 +1,16 @@
+<p>Returns all fields and values of the hash stored at <code>key</code>. In the returned
+value, every field name is followed by its value, so the length
+of the reply is twice the size of the hash.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: list of fields and their values stored in the hash, or an
+empty list when <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+HSET myhash field1 "Hello"
+HSET myhash field2 "World"
+HGETALL myhash
+</code></pre>

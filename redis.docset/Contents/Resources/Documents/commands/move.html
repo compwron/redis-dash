@@ -1,0 +1,14 @@
+<p>Move <code>key</code> from the currently selected database (see <code>SELECT</code>) to the specified
+destination database. When <code>key</code> already exists in the destination database, or
+it does not exist in the source database, it does nothing. It is possible to
+use <code>MOVE</code> as a locking primitive because of this.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if <code>key</code> was moved.</li>
+<li><code>0</code> if <code>key</code> was not moved.</li>
+</ul>
+

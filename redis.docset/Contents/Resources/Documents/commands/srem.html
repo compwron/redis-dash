@@ -1,0 +1,27 @@
+<p>Remove the specified members from the set stored at <code>key</code>. Specified members
+that are not a member of this set are ignored.  If <code>key</code> does not exist, it is
+treated as an empty set and this command returns <code>0</code>.</p>
+
+<p>An error is returned when the value stored at <code>key</code> is not a set.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the number of members that were removed from the set, not including non existing members.</p>
+
+<p>@history</p>
+
+<ul>
+<li><code>&gt;= 2.4</code>: Accepts multiple <code>member</code> arguments. Redis versions older than 2.4 can only remove a set member per call.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "one"
+SADD myset "two"
+SADD myset "three"
+SREM myset "one"
+SREM myset "four"
+SMEMBERS myset
+</code></pre>

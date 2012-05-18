@@ -1,0 +1,21 @@
+<p>Remove the existing timeout on <code>key</code>, turning the key from <em>volatile</em> (a key with an expire set) to <em>persistent</em> (a key that will never expire as no timeout is associated).</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if the timeout was removed.</li>
+<li><code>0</code> if <code>key</code> does not exist or does not have an associated timeout.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+EXPIRE mykey 10
+TTL mykey
+PERSIST mykey
+TTL mykey
+</code></pre>

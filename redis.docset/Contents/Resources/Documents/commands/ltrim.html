@@ -1,0 +1,41 @@
+<p>Trim an existing list so that it will contain only the specified range of
+elements specified. Both <code>start</code> and <code>stop</code> are zero-based indexes, where <code>0</code>
+is the first element of the list (the head), <code>1</code> the next element and so on.</p>
+
+<p>For example: <code>LTRIM foobar 0 2</code> will modify the list stored at <code>foobar</code> so that
+only the first three elements of the list will remain.</p>
+
+<p><code>start</code> and <code>end</code> can also be negative numbers indicating offsets from the end
+of the list, where <code>-1</code> is the last element of the list, <code>-2</code> the penultimate
+element and so on.</p>
+
+<p>Out of range indexes will not produce an error: if <code>start</code> is larger than the
+end of the list, or <code>start &gt; end</code>, the result will be an empty list (which
+causes <code>key</code> to be removed).  If <code>end</code> is larger than the end of the list,
+Redis will treat it like the last element of the list.</p>
+
+<p>A common use of <code>LTRIM</code> is together with <code>LPUSH</code>/<code>RPUSH</code>. For example:</p>
+
+<pre><code>LPUSH mylist someelement
+LTRIM mylist 0 99
+</code></pre>
+
+<p>This pair of commands will push a new element on the list, while making sure
+that the list will not grow larger than 100 elements. This is very useful when
+using Redis to store logs for example. It is important to note that when used
+in this way <code>LTRIM</code> is an O(1) operation because in the average case just one
+element is removed from the tail of the list.</p>
+
+<p>@return</p>
+
+<p>@status-reply</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+RPUSH mylist "one"
+RPUSH mylist "two"
+RPUSH mylist "three"
+LTRIM mylist 1 -1
+LRANGE mylist 0 -1
+</code></pre>

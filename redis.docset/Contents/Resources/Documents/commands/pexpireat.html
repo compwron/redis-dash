@@ -1,0 +1,24 @@
+<p>@complexity</p>
+
+<p>O(1)</p>
+
+<p><code>PEXPIREAT</code> has the same effect and semantic as <code>EXPIREAT</code>, but the unix time at which the key will expire is specified in milliseconds instead of seconds.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if the timeout was set.</li>
+<li><code>0</code> if <code>key</code> does not exist or the timeout could not be set (see: <code>EXPIRE</code>).</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+PEXPIREAT mykey 1555555555005
+TTL mykey
+PTTL mykey
+</code></pre>

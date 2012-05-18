@@ -1,0 +1,19 @@
+<p>Returns if <code>member</code> is a member of the set stored at <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if the element is a member of the set.</li>
+<li><code>0</code> if the element is not a member of the set, or if <code>key</code> does not exist.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "one"
+SISMEMBER myset "one"
+SISMEMBER myset "two"
+</code></pre>

@@ -1,0 +1,15 @@
+<p>Renames <code>key</code> to <code>newkey</code>. It returns an error when the source and destination
+names are the same, or when <code>key</code> does not exist. If <code>newkey</code> already exists it
+is overwritten.</p>
+
+<p>@return</p>
+
+<p>@status-reply</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+RENAME mykey myotherkey
+GET myotherkey
+</code></pre>

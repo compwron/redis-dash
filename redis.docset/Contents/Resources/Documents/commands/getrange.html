@@ -1,0 +1,23 @@
+<p><strong>Warning</strong>: this command was renamed to <code>GETRANGE</code>, it is called <code>SUBSTR</code> in Redis versions <code>&lt;= 2.0</code>.</p>
+
+<p>Returns the substring of the string value stored at <code>key</code>, determined by the
+offsets <code>start</code> and <code>end</code> (both are inclusive). Negative offsets can be used in
+order to provide an offset starting from the end of the string. So -1 means the
+last character, -2 the penultimate and so forth.</p>
+
+<p>The function handles out of range requests by limiting the resulting range to
+the actual length of the string.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "This is a string"
+GETRANGE mykey 0 3
+GETRANGE mykey -3 -1
+GETRANGE mykey 0 -1
+GETRANGE mykey 10 100
+</code></pre>

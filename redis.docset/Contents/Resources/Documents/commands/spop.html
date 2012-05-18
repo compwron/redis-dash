@@ -1,0 +1,18 @@
+<p>Removes and returns a random element from the set value stored at <code>key</code>.</p>
+
+<p>This operation is similar to <code>SRANDMEMBER</code>, that returns a random
+element from a set but does not remove it.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the removed element, or <code>nil</code> when <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "one"
+SADD myset "two"
+SADD myset "three"
+SPOP myset
+SMEMBERS myset
+</code></pre>

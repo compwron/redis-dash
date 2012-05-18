@@ -1,0 +1,21 @@
+<p>Returns the element at index <code>index</code> in the list stored at <code>key</code>.
+The index is zero-based, so <code>0</code> means the first element, <code>1</code> the second
+element and so on. Negative indices can be used to designate elements
+starting at the tail of the list. Here, <code>-1</code> means the last element, <code>-2</code> means
+the penultimate and so forth.</p>
+
+<p>When the value at <code>key</code> is not a list, an error is returned.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the requested element, or <code>nil</code> when <code>index</code> is out of range.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+LPUSH mylist "World"
+LPUSH mylist "Hello"
+LINDEX mylist 0
+LINDEX mylist -1
+LINDEX mylist 3
+</code></pre>

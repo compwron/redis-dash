@@ -1,0 +1,25 @@
+<p>@complexity</p>
+
+<p>O(1)</p>
+
+<p>The <code>TIME</code> command returns the current server time as a two items lists: an unix timestamp and the amount of microseconds already elapsed in the current second.
+Basically the interface is very similar to the one of the <code>gettimeofday</code> syscall.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply, specifically:</p>
+
+<p>A multi bulk reply containing two elements:</p>
+
+<ul>
+<li>unix time in seconds.</li>
+<li>microseconds.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+TIME
+TIME
+</code></pre>

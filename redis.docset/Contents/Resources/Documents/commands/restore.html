@@ -1,0 +1,25 @@
+<p>Create a key assosicated with a value that is obtained unserializing the provided serialized value (obtained via <code>DUMP</code>).</p>
+
+<p>If <code>ttl</code> is 0 the key is created without any expire, otherwise the specified expire time (in milliseconds) is set.</p>
+
+<p><code>RESTORE</code> checks the RDB version and data checksum. If they don't match an error is returned.</p>
+
+<p>@return</p>
+
+<p>@status-reply: The command returns OK on success.</p>
+
+<p>@examples</p>
+
+<pre><code>redis&gt; DEL mykey
+0
+redis&gt; RESTORE mykey 0 "\n\x17\x17\x00\x00\x00\x12\x00\x00\x00\x03\x00\
+                        x00\xc0\x01\x00\x04\xc0\x02\x00\x04\xc0\x03\x00\
+                        xff\x04\x00u#&lt;\xc0;.\xe9\xdd"
+OK
+redis&gt; TYPE mykey
+list
+redis&gt; LRANGE mykey 0 -1
+1) "1"
+2) "2"
+3) "3"
+</code></pre>

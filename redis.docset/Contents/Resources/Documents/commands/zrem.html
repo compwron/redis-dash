@@ -1,0 +1,29 @@
+<p>Removes the specified members from the sorted set stored at <code>key</code>. Non existing members are ignored.</p>
+
+<p>An error is returned when <code>key</code> exists and does not hold a sorted set.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li>The number of members removed from the sorted set, not including non existing members.</li>
+</ul>
+
+
+<p>@history</p>
+
+<ul>
+<li><code>&gt;= 2.4</code>: Accepts multiple elements. In Redis versions older than 2.4 it was possible to remove a single member per call.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZADD myzset 3 "three"
+ZREM myzset "two"
+ZRANGE myzset 0 -1 WITHSCORES
+</code></pre>

@@ -1,0 +1,15 @@
+<p>Returns the remaining time to live of a key that has a timeout.  This
+introspection capability allows a Redis client to check how many seconds a
+given key will continue to be part of the dataset.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: TTL in seconds or <code>-1</code> when <code>key</code> does not exist or does not have a timeout.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+EXPIRE mykey 10
+TTL mykey
+</code></pre>

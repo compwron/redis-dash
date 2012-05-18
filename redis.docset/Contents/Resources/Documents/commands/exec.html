@@ -1,0 +1,15 @@
+<p>Executes all previously queued commands in a
+<a href="/topics/transactions">transaction</a> and restores the connection state to
+normal.</p>
+
+<p>When using <code>WATCH</code>, <code>EXEC</code> will execute commands only if the
+watched keys were not modified, allowing for a <a href="/topics/transactions#cas">check-and-set
+mechanism</a>.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: each element being the reply to each of the commands
+in the atomic transaction.</p>
+
+<p>When using <code>WATCH</code>, <code>EXEC</code> can return a @nil-reply if the execution was
+aborted.</p>

@@ -1,0 +1,18 @@
+<p>Sets the given keys to their respective values. <code>MSET</code> replaces existing values
+with new values, just as regular <code>SET</code>.  See <code>MSETNX</code> if you don't want to
+overwrite existing values.</p>
+
+<p><code>MSET</code> is atomic, so all given keys are set at once. It is not possible for
+clients to see that some of the keys were updated while others are unchanged.</p>
+
+<p>@return</p>
+
+<p>@status-reply: always <code>OK</code> since <code>MSET</code> can't fail.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+MSET key1 "Hello" key2 "World"
+GET key1
+GET key2
+</code></pre>

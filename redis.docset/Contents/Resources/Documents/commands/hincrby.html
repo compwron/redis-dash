@@ -1,0 +1,23 @@
+<p>Increments the number stored at <code>field</code> in the hash stored at <code>key</code> by
+<code>increment</code>. If <code>key</code> does not exist, a new key holding a hash is created. If
+<code>field</code> does not exist the value is set to <code>0</code> before the operation is
+performed.</p>
+
+<p>The range of values supported by <code>HINCRBY</code> is limited to 64 bit signed
+integers.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the value at <code>field</code> after the increment operation.</p>
+
+<p>@examples</p>
+
+<p>Since the <code>increment</code> argument is signed, both increment and decrement
+operations can be performed:</p>
+
+<pre><code>@cli
+HSET myhash field 5
+HINCRBY myhash field 1
+HINCRBY myhash field -1
+HINCRBY myhash field -10
+</code></pre>

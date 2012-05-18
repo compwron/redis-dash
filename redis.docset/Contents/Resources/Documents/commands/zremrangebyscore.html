@@ -1,0 +1,19 @@
+<p>Removes all elements in the sorted set stored at <code>key</code> with a score between
+<code>min</code> and <code>max</code> (inclusive).</p>
+
+<p>Since version 2.1.6, <code>min</code> and <code>max</code> can be exclusive, following the syntax of
+<code>ZRANGEBYSCORE</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the number of elements removed.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZADD myzset 3 "three"
+ZREMRANGEBYSCORE myzset -inf (2
+ZRANGE myzset 0 -1 WITHSCORES
+</code></pre>

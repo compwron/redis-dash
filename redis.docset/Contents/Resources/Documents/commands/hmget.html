@@ -1,0 +1,17 @@
+<p>Returns the values associated with the specified <code>fields</code> in the hash stored at
+<code>key</code>.</p>
+
+<p>For every <code>field</code> that does not exist in the hash, a <code>nil</code> value is returned.
+Because a non-existing keys are treated as empty hashes, running <code>HMGET</code>
+against a non-existing <code>key</code> will return a list of <code>nil</code> values.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: list of values associated with the given fields, in the same
+order as they are requested.</p>
+
+<pre><code>@cli
+HSET myhash field1 "Hello"
+HSET myhash field2 "World"
+HMGET myhash field1 field2 nofield
+</code></pre>

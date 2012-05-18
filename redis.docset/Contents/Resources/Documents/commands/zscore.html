@@ -1,0 +1,16 @@
+<p>Returns the score of <code>member</code> in the sorted set at <code>key</code>.</p>
+
+<p>If <code>member</code> does not exist in the sorted set, or <code>key</code> does not exist,
+<code>nil</code> is returned.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the score of <code>member</code> (a double precision floating point number),
+represented as string.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZSCORE myzset "one"
+</code></pre>

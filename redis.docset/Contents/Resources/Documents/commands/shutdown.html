@@ -1,0 +1,34 @@
+<p>The command behavior is the following:</p>
+
+<ul>
+<li>Stop all the clients.</li>
+<li>Perform a blocking SAVE if at least one <strong>save point</strong> is configured.</li>
+<li>Flush the Append Only File if AOF is enabled.</li>
+<li>Quit the server.</li>
+</ul>
+
+
+<p>If persistence is enabled this commands makes sure that Redis is switched
+off without the lost of any data. This is not guaranteed if the client uses
+simply <code>SAVE</code> and then <code>QUIT</code> because other clients may alter the DB data
+between the two commands.</p>
+
+<p>Note: A Redis instance that is configured for not persisting on disk
+(no AOF configured, nor "save" directive) will not dump the RDB file on
+<code>SHUTDOWN</code>, as usually you don't want Redis instances used only for caching
+to block on when shutting down.</p>
+
+<h2>SAVE and NOSAVE modifiers</h2>
+
+<p>It is possible to specify an optional modifier to alter the behavior of the command. Specifically:</p>
+
+<ul>
+<li><strong>SHUTDOWN SAVE</strong> will force a DB saving operation even if no save points are configured.</li>
+<li><strong>SHUTDOWN NOSAVE</strong> will prevent a DB saving operation even if one or more save points are configured. (You can think at this variant as an hypothetical <strong>ABORT</strong> command that just stops the server).</li>
+</ul>
+
+
+<p>@return</p>
+
+<p>@status-reply on error. On success nothing is returned since the server
+quits and the connection is closed.</p>

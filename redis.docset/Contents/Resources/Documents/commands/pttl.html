@@ -1,0 +1,17 @@
+<p>@complexity</p>
+
+<p>O(1)</p>
+
+<p>Like <code>TTL</code> this comand returns the remaining time to live of a key that has an expire set, with the sole difference that <code>TTL</code> returns the amount of remaining time in seconds while <code>PTTL</code> returns it in milliseconds.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: Time to live in milliseconds or <code>-1</code> when <code>key</code> does not exist or does not have a timeout.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+EXPIRE mykey 1
+PTTL mykey
+</code></pre>

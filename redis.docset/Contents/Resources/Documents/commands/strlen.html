@@ -1,0 +1,14 @@
+<p>Returns the length of the string value stored at <code>key</code>.
+An error is returned when <code>key</code> holds a non-string value.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the length of the string at <code>key</code>, or <code>0</code> when <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello world"
+STRLEN mykey
+STRLEN nonexisting
+</code></pre>

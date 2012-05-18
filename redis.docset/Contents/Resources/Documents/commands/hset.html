@@ -1,0 +1,20 @@
+<p>Sets <code>field</code> in the hash stored at <code>key</code> to <code>value</code>. If <code>key</code> does not exist, a
+new key holding a hash is created. If <code>field</code> already exists in the hash, it
+is overwritten.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if <code>field</code> is a new field in the hash and <code>value</code> was set.</li>
+<li><code>0</code> if <code>field</code> already exists in the hash and the value was updated.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+HSET myhash field1 "Hello"
+HGET myhash field1
+</code></pre>

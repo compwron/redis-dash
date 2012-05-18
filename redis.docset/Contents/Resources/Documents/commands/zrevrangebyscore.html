@@ -1,0 +1,26 @@
+<p>Returns all the elements in the sorted set at <code>key</code> with a score between <code>max</code>
+and <code>min</code> (including elements with score equal to <code>max</code> or <code>min</code>). In contrary
+to the default ordering of sorted sets, for this command the elements are
+considered to be ordered from high to low scores.</p>
+
+<p>The elements having the same score are returned in reverse lexicographical order.</p>
+
+<p>Apart from the reversed ordering, <code>ZREVRANGEBYSCORE</code> is similar to
+<code>ZRANGEBYSCORE</code>.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: list of elements in the specified score range (optionally with
+their scores).</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZADD myzset 3 "three"
+ZREVRANGEBYSCORE myzset +inf -inf
+ZREVRANGEBYSCORE myzset 2 1
+ZREVRANGEBYSCORE myzset 2 (1
+ZREVRANGEBYSCORE myzset (2 (1
+</code></pre>

@@ -1,0 +1,19 @@
+<p>Resets the statistics reported by Redis using the <code>INFO</code> command.</p>
+
+<p>These are the counters that are reset:</p>
+
+<ul>
+<li>Keyspace hits</li>
+<li>Keyspace misses</li>
+<li>Number of commands processed</li>
+<li>Number of connections received</li>
+<li>Number of expired keys</li>
+<li>Number of rejected connections</li>
+<li>Latest fork(2) time</li>
+<li>The <code>aof_delayed_fsync</code> counter</li>
+</ul>
+
+
+<p>@return</p>
+
+<p>@status-reply: always <code>OK</code>.</p>

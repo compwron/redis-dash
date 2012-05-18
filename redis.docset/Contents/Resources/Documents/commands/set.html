@@ -1,0 +1,13 @@
+<p>Set <code>key</code> to hold the string <code>value</code>. If <code>key</code> already holds a value, it is
+overwritten, regardless of its type.</p>
+
+<p>@return</p>
+
+<p>@status-reply: always <code>OK</code> since <code>SET</code> can't fail.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+GET mykey
+</code></pre>

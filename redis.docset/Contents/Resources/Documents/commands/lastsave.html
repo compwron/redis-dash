@@ -1,0 +1,8 @@
+<p>Return the UNIX TIME of the last DB save executed with success.
+A client may check if a <code>BGSAVE</code> command succeeded reading the <code>LASTSAVE</code>
+value, then issuing a <code>BGSAVE</code> command and checking at regular intervals
+every N seconds if <code>LASTSAVE</code> changed.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: an UNIX time stamp.</p>

@@ -1,0 +1,19 @@
+<p><code>BRPOPLPUSH</code> is the blocking variant of <code>RPOPLPUSH</code>.
+When <code>source</code> contains elements, this command behaves exactly like
+<code>RPOPLPUSH</code>. When <code>source</code> is empty, Redis will block
+the connection until another client pushes to it or until <code>timeout</code> is reached. A <code>timeout</code> of zero can be used to block indefinitely.</p>
+
+<p>See <code>RPOPLPUSH</code> for more information.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the element being popped from <code>source</code> and pushed to
+<code>destination</code>. If <code>timeout</code> is reached, a @nil-reply is returned.</p>
+
+<h2>Pattern: Reliable queue</h2>
+
+<p>Please see the pattern description in the <code>RPOPLPUSH</code> documentation.</p>
+
+<h2>Pattern: Circular list</h2>
+
+<p>Please see the pattern description in the <code>RPOPLPUSH</code> documentation.</p>

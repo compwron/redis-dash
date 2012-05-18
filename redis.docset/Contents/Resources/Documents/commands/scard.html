@@ -1,0 +1,14 @@
+<p>Returns the set cardinality (number of elements) of the set stored at <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the cardinality (number of elements) of the set, or <code>0</code> if
+<code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "Hello"
+SADD myset "World"
+SCARD myset
+</code></pre>

@@ -1,0 +1,31 @@
+<p>Removes the first <code>count</code> occurrences of elements equal to <code>value</code> from the
+list stored at <code>key</code>. The <code>count</code> argument influences the operation in the
+following ways:</p>
+
+<ul>
+<li><code>count &gt; 0</code>: Remove elements equal to <code>value</code> moving from head to tail.</li>
+<li><code>count &lt; 0</code>: Remove elements equal to <code>value</code> moving from tail to head.</li>
+<li><code>count = 0</code>: Remove all elements equal to <code>value</code>.</li>
+</ul>
+
+
+<p>For example, <code>LREM list -2 "hello"</code> will remove the last two occurrences of
+<code>"hello"</code> in the list stored at <code>list</code>.</p>
+
+<p>Note that non-existing keys are treated like empty lists, so when <code>key</code> does
+not exist, the command will always return <code>0</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the number of removed elements.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+RPUSH mylist "hello"
+RPUSH mylist "hello"
+RPUSH mylist "foo"
+RPUSH mylist "hello"
+LREM mylist -2 "hello"
+LRANGE mylist 0 -1
+</code></pre>

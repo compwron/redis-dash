@@ -1,0 +1,25 @@
+<p>Add the specified members to the set stored at <code>key</code>. Specified members that
+are already a member of this set are ignored.  If <code>key</code> does not exist, a new
+set is created before adding the specified members.</p>
+
+<p>An error is returned when the value stored at <code>key</code> is not a set.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the number of elements that were added to the set, not including all the elements already present into the set.</p>
+
+<p>@history</p>
+
+<ul>
+<li><code>&gt;= 2.4</code>: Accepts multiple <code>member</code> arguments. Redis versions before 2.4 are only able to add a single member per call.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "Hello"
+SADD myset "World"
+SADD myset "World"
+SMEMBERS myset
+</code></pre>

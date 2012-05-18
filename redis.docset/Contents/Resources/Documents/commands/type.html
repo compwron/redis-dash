@@ -1,0 +1,18 @@
+<p>Returns the string representation of the type of the value stored at <code>key</code>.
+The different types that can be returned are: <code>string</code>, <code>list</code>, <code>set</code>, <code>zset</code>
+and <code>hash</code>.</p>
+
+<p>@return</p>
+
+<p>@status-reply: type of <code>key</code>, or <code>none</code> when <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET key1 "value"
+LPUSH key2 "value"
+SADD key3 "value"
+TYPE key1
+TYPE key2
+TYPE key3
+</code></pre>

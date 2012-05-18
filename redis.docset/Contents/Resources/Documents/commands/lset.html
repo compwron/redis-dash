@@ -1,0 +1,19 @@
+<p>Sets the list element at <code>index</code> to <code>value</code>. For more information on the
+<code>index</code> argument, see <code>LINDEX</code>.</p>
+
+<p>An error is returned for out of range indexes.</p>
+
+<p>@return</p>
+
+<p>@status-reply</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+RPUSH mylist "one"
+RPUSH mylist "two"
+RPUSH mylist "three"
+LSET mylist 0 "four"
+LSET mylist -2 "five"
+LRANGE mylist 0 -1
+</code></pre>

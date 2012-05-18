@@ -1,0 +1,14 @@
+<p>Returns the value associated with <code>field</code> in the hash stored at <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the value associated with <code>field</code>, or <code>nil</code> when <code>field</code> is not
+present in the hash or <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+HSET myhash field1 "foo"
+HGET myhash field1
+HGET myhash field2
+</code></pre>

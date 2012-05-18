@@ -1,0 +1,27 @@
+<p>Atomically sets <code>key</code> to <code>value</code> and returns the old value stored at <code>key</code>.
+Returns an error when <code>key</code> exists but does not hold a string value.</p>
+
+<h2>Design pattern</h2>
+
+<p><code>GETSET</code> can be used together with <code>INCR</code> for counting with atomic reset.  For
+example: a process may call <code>INCR</code> against the key <code>mycounter</code> every time some
+event occurs, but from time to time we need to get the value of the counter and
+reset it to zero atomically.  This can be done using <code>GETSET mycounter "0"</code>:</p>
+
+<pre><code>@cli
+INCR mycounter
+GETSET mycounter "0"
+GET mycounter
+</code></pre>
+
+<p>@return</p>
+
+<p>@bulk-reply: the old value stored at <code>key</code>, or <code>nil</code> when <code>key</code> did not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+GETSET mykey "World"
+GET mykey
+</code></pre>

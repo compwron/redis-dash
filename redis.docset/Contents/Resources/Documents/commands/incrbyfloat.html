@@ -1,0 +1,35 @@
+<p>Increment the string representing a floating point number stored at <code>key</code> by
+the specified <code>increment</code>.  If the key does not exist, it is set to <code>0</code> before performing the operation. An error is returned if one of the following conditions occur:</p>
+
+<ul>
+<li>The key contains a value of the wrong type (not a string).</li>
+<li>The current key content or the specified increment are not parsable as a double precision floating point number.</li>
+</ul>
+
+
+<p>If the command is successful the new incremented value is stored as the new value of the key (replacing the old one), and returned to the caller as a string.</p>
+
+<p>Both the value already contained in the string key and the increment argument
+can be optionally provided in exponential notation, however the value computed
+after the incremnet is stored consistently in the same format, that is, an integer number followed (if needed) by a dot, and a variable number of digits representing the decimal part of the number. Trailing zeroes are always removed.</p>
+
+<p>The precision of the output is fixed at 17 digits after the decimal point
+regardless of the actual internal precision of the computation.</p>
+
+<p>@return</p>
+
+<p>@bulk-reply: the value of <code>key</code> after the increment.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey 10.50
+INCRBYFLOAT mykey 0.1
+SET mykey 5.0e3
+INCRBYFLOAT mykey 2.0e2
+</code></pre>
+
+<h2>Implementation details</h2>
+
+<p>The command is always propagated in the replication link and the Append Only File as a <code>SET</code> operation, so that differences in the underlying floating point
+math implementation will not be sources of inconsistency.</p>

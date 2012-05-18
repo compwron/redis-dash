@@ -1,0 +1,137 @@
+<h1>FAQ</h1>
+
+<h2>Why Redis is different compared to other key-value stores?</h2>
+
+<p>There are two main reasons.</p>
+
+<ul>
+<li>Redis is a different evolution path in the key-value DBs where values can contain more complex data types, with atomic operations defined against those data types. Redis data types are closely related to fundamental data structures and are exposed to the programmer as such, without additional abstraction layers.</li>
+<li>Redis is an in-memory but persistent on disk database, so it represents a different trade off where very high write and read speed is achieved with the limitation of data sets that can't be larger than memory. Another advantage of
+in memory databases is that the memory representation of complex data structure
+is much simpler to manipulate compared to the same data structure on disk, so
+Redis can do a lot with little internal complexity. At the same time an on-disk
+format that does not need to be suitable for random access is compact and
+always generated in an append-only fashion.</li>
+</ul>
+
+
+<h2>What's the Redis memory footprint?</h2>
+
+<p>To give you an example: 1 Million keys with the key being the natural numbers from
+0 to 999999 and the string "Hello World" as value use 100MB on my Intel MacBook
+(32bit). Note that the same data stored linearly in an unique string takes
+something like 16MB, this is expected because with small keys and values there
+is a lot of overhead. Memcached will perform similarly, but a bit better as
+Redis has more overhead (type information, refcount and so forth) to represent
+different kinds of objects.</p>
+
+<p>With large keys/values the ratio is much better of course.</p>
+
+<p>64 bit systems will use considerably more memory than 32 bit systems to store the same keys, especially if the keys and values are small, this is because pointers takes 8 bytes in 64 bit systems. But of course the advantage is that you can
+have a lot of memory in 64 bit systems, so in order to run large Redis servers a 64 bit system is more or less required.</p>
+
+<h2>I like Redis high level operations and features, but I don't like that it takes everything in memory and I can't have a dataset larger the memory. Plans to change this?</h2>
+
+<p>In the past the Redis developers experimented with Virtual Memory and other systems in order to allow larger than RAM datasets, but after all we are very happy if we can do one thing well: data served from memory, disk used for storage. So for now there are no plans to create an on disk backend for Redis. Most of what
+Redis is, after all, is a direct result of its current design.</p>
+
+<p>However many large users solved the issue of large datasets distributing among multiple Redis nodes, using client-side hashing. <strong>Craigslist</strong> and <strong>Groupon</strong> are two examples.</p>
+
+<p>At the same time Redis Cluster, an automatically distributed and fault tolerant
+implementation of a Redis subset, is a work in progress, and may be a good
+solution for many use cases.</p>
+
+<h2>If my dataset is too big for RAM and I don't want to use consistent hashing or other ways to distribute the dataset across different nodes, what I can do to use Redis anyway?</h2>
+
+<p>A possible solution is to use both an on disk DB (MySQL or others) and Redis
+at the same time, basically take the state on Redis (metadata, small but often written info), and all the other things that get accessed very
+frequently: user auth tokens, Redis Lists with chronologically ordered IDs of
+the last N-comments, N-posts, and so on. Then use MySQL (or any other) as a simple storage engine for larger data, that is just create a table with an auto-incrementing ID as primary key and a large BLOB field as data field. Access MySQL data only by primary key (the ID). The application will run the high traffic queries against Redis but when there is to take the big data will ask MySQL for
+specific resources IDs.</p>
+
+<h2>Is there something I can do to lower the Redis memory usage?</h2>
+
+<p>If you can use Redis 32 bit instances, and make good use of small hashes,
+lists, sorted sets, and sets of integers, since Redis is able to represent
+those data types in the special case of a few elements in a much more compact
+way.</p>
+
+<h2>What happens if Redis runs out of memory?</h2>
+
+<p>With modern operating systems malloc() returning NULL is not common, usually
+the server will start swapping and Redis performances will degrade so
+you'll probably notice there is something wrong.</p>
+
+<p>The INFO command will report the amount of memory Redis is using so you can
+write scripts that monitor your Redis servers checking for critical conditions.</p>
+
+<p>You can also use the "maxmemory" option in the config file to put a limit to
+the memory Redis can use. If this limit is reached Redis will start to reply
+with an error to write commands (but will continue to accept read-only
+commands), or you can configure it to evict keys when the max memory limit
+is reached.</p>
+
+<h2>Background saving is failing with a fork() error under Linux even if I've a lot of free RAM!</h2>
+
+<p>Short answer: <code>echo 1 &gt; /proc/sys/vm/overcommit_memory</code> :)</p>
+
+<p>And now the long one:</p>
+
+<p>Redis background saving schema relies on the copy-on-write semantic of fork in
+modern operating systems: Redis forks (creates a child process) that is an
+exact copy of the parent. The child process dumps the DB on disk and finally
+exits. In theory the child should use as much memory as the parent being a
+copy, but actually thanks to the copy-on-write semantic implemented by most
+modern operating systems the parent and child process will <em>share</em> the common
+memory pages. A page will be duplicated only when it changes in the child or in
+the parent. Since in theory all the pages may change while the child process is
+saving, Linux can't tell in advance how much memory the child will take, so if
+the <code>overcommit_memory</code> setting is set to zero fork will fail unless there is
+as much free RAM as required to really duplicate all the parent memory pages,
+with the result that if you have a Redis dataset of 3 GB and just 2 GB of free
+memory it will fail.</p>
+
+<p>Setting <code>overcommit_memory</code> to 1 says Linux to relax and perform the fork in a
+more optimistic allocation fashion, and this is indeed what you want for Redis.</p>
+
+<p>A good source to understand how Linux Virtual Memory work and other
+alternatives for <code>overcommit_memory</code> and <code>overcommit_ratio</code> is this classic
+from Red Hat Magazine, <a href="http://www.redhat.com/magazine/001nov04/features/vm/">"Understanding Virtual Memory"</a>.</p>
+
+<h2>Are Redis on disk snapshots atomic?</h2>
+
+<p>Yes, redis background saving process is always fork(2)ed when the server is
+outside of the execution of a command, so every command reported to be atomic
+in RAM is also atomic from the point of view of the disk snapshot.</p>
+
+<h2>Redis is single threaded, how can I exploit multiple CPU / cores?</h2>
+
+<p>Simply start multiple instances of Redis in the same box and
+treat them as different servers. At some point a single box may not be
+enough anyway, so if you want to use multiple CPUs you can start thinking
+at some way to shard earlier. However note that using pipelining Redis running
+on an average Linux system can deliver even 500k requests per second, so
+if your application mainly uses O(N) or O(log(N)) commands it is hardly
+going to use too much CPU.</p>
+
+<p>In Redis there are client libraries such Redis-rb (the Ruby client) and
+Predis (one of the most used PHP clients) that are able to handle multiple
+servers automatically using <em>consistent hashing</em>.</p>
+
+<h2>What is the maximum number of keys a single Redis instance can hold? and what the max number of elements in a List, Set, Ordered Set?</h2>
+
+<p>In theory Redis can handle up to 2<sup>32</sup> keys, and was tested in practice to
+handle at least 250 million of keys per instance. We are working in order to
+experiment with larger values.</p>
+
+<p>Every list, set, and ordered set, can hold 2<sup>32</sup> elements.</p>
+
+<p>In other words your limit is likely the available memory in your system.</p>
+
+<h2>What Redis means actually?</h2>
+
+<p>It means REmote DIctionary Server.</p>
+
+<h2>Why did you started the Redis project?</h2>
+
+<p>Originally Redis was started in order to scale <a href="http://lloogg.com">LLOOGG</a>. But after I got the basic server working I liked the idea to share the work with other guys, and Redis was turned into an open source project.</p>

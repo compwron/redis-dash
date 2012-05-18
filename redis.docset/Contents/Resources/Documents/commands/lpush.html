@@ -1,0 +1,25 @@
+<p>Insert all the specified values at the head of the list stored at <code>key</code>.
+If <code>key</code> does not exist, it is created as empty list before performing
+the push operations.
+When <code>key</code> holds a value that is not a list, an error is returned.</p>
+
+<p>It is possible to push multiple elements using a single command call just specifying multiple arguments at the end of the command. Elements are inserted one after the other to the head of the list, from the leftmost element to the rightmost element. So for instance the command <code>LPUSH mylist a b c</code> will result into a list containing <code>c</code> as first element, <code>b</code> as second element and <code>a</code> as third element.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the length of the list after the push operations.</p>
+
+<p>@history</p>
+
+<ul>
+<li><code>&gt;= 2.4</code>: Accepts multiple <code>value</code> arguments. In Redis versions older than 2.4 it was possible to push a single value per command.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+LPUSH mylist "world"
+LPUSH mylist "hello"
+LRANGE mylist 0 -1
+</code></pre>

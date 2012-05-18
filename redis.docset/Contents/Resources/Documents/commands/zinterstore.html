@@ -1,0 +1,30 @@
+<p>Computes the intersection of <code>numkeys</code> sorted sets given by the specified keys,
+and stores the result in <code>destination</code>. It is mandatory to provide the number
+of input keys (<code>numkeys</code>) before passing the input keys and the other
+(optional) arguments.</p>
+
+<p>By default, the resulting score of an element is the sum of its scores in the
+sorted sets where it exists. Because intersection requires an element
+to be a member of every given sorted set, this results in the score of every
+element in the resulting sorted set to be equal to the number of input sorted sets.</p>
+
+<p>For a description of the <code>WEIGHTS</code> and <code>AGGREGATE</code> options, see <code>ZUNIONSTORE</code>.</p>
+
+<p>If <code>destination</code> already exists, it is overwritten.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the number of elements in the resulting sorted set at
+<code>destination</code>.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD zset1 1 "one"
+ZADD zset1 2 "two"
+ZADD zset2 1 "one"
+ZADD zset2 2 "two"
+ZADD zset2 3 "three"
+ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
+ZRANGE out 0 -1 WITHSCORES
+</code></pre>

@@ -1,0 +1,21 @@
+<p>Renames <code>key</code> to <code>newkey</code> if <code>newkey</code> does not yet exist.
+It returns an error under the same conditions as <code>RENAME</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply, specifically:</p>
+
+<ul>
+<li><code>1</code> if <code>key</code> was renamed to <code>newkey</code>.</li>
+<li><code>0</code> if <code>newkey</code> already exists.</li>
+</ul>
+
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "Hello"
+SET myotherkey "World"
+RENAMENX mykey myotherkey
+GET myotherkey
+</code></pre>

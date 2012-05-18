@@ -1,0 +1,296 @@
+<h1>Protocol specification</h1>
+
+<p>The Redis protocol is a compromise between the following things:</p>
+
+<ul>
+<li>Simple to implement</li>
+<li>Fast to parse by a computer</li>
+<li>Easy enough to parse by a human</li>
+</ul>
+
+
+<h2>Networking layer</h2>
+
+<p>A client connects to a Redis server creating a TCP connection to the port 6379.
+Every Redis command or data transmitted by the client and the server is
+terminated by <code>\r\n</code> (CRLF).</p>
+
+<h2>Requests</h2>
+
+<p>Redis accepts commands composed of different arguments.
+Once a command is received, it is processed and a reply is sent back to the client.</p>
+
+<h2>The new unified request protocol</h2>
+
+<p>The new unified protocol was introduced in Redis 1.2, but it became the
+standard way for talking with the Redis server in Redis 2.0.</p>
+
+<p>In the unified protocol all the arguments sent to the Redis server are binary
+safe. This is the general form:</p>
+
+<pre><code>*&lt;number of arguments&gt; CR LF
+$&lt;number of bytes of argument 1&gt; CR LF
+&lt;argument data&gt; CR LF
+...
+$&lt;number of bytes of argument N&gt; CR LF
+&lt;argument data&gt; CR LF
+</code></pre>
+
+<p>See the following example:</p>
+
+<pre><code>*3
+$3
+SET
+$5
+mykey
+$7
+myvalue
+</code></pre>
+
+<p>This is how the above command looks as a quoted string, so that it is possible
+to see the exact value of every byte in the query:</p>
+
+<pre><code>"*3\r\n$3\r\nSET\r\n$5\r\nmykey\r\n$7\r\nmyvalue\r\n"
+</code></pre>
+
+<p>As you will see in a moment this format is also used in Redis replies. The
+format used for every argument <code>$6\r\nmydata\r\n</code> is called a Bulk Reply.
+While the actual unified request protocol is what Redis uses to return list of
+items, and is called a @multi-bulk-reply. It is just the sum of N different Bulk
+Replies prefixed by a <code>*&lt;argc&gt;\r\n</code> string where <code>&lt;argc&gt;</code> is the number of
+arguments (Bulk Replies) that will follow.</p>
+
+<h2>Replies</h2>
+
+<p>Redis will reply to commands with different kinds of replies. It is possible to
+check the kind of reply from the first byte sent by the server:</p>
+
+<ul>
+<li>With a single line reply the first byte of the reply will be "+"</li>
+<li>With an error message the first byte of the reply will be "-"</li>
+<li>With an integer number the first byte of the reply will be ":"</li>
+<li>With bulk reply the first byte of the reply will be "$"</li>
+<li>With multi-bulk reply the first byte of the reply will be "<code>*</code>"</li>
+</ul>
+
+
+<p><a name="status-reply"></a></p>
+
+<h2>Status reply</h2>
+
+<p>A status reply (or: single line reply) is in the form of a single line string
+starting with "+" terminated by "\r\n". For example:</p>
+
+<pre><code>+OK
+</code></pre>
+
+<p>The client library should return everything after the "+", that is, the string
+"OK" in this example.</p>
+
+<h2>Error reply</h2>
+
+<p>Errors are sent similar to status replies. The only difference is that the first
+byte is "-" instead of "+".</p>
+
+<p>Error replies are only sent when something strange happened, for instance if
+you try to perform an operation against the wrong data type, or if the command
+does not exist and so forth. So an exception should be raised by the library
+client when an Error Reply is received.</p>
+
+<p><a name="integer-reply"></a></p>
+
+<h2>Integer reply</h2>
+
+<p>This type of reply is just a CRLF terminated string representing an integer,
+prefixed by a ":" byte. For example ":0\r\n", or ":1000\r\n" are integer
+replies.</p>
+
+<p>With commands like INCR or LASTSAVE using the integer reply to actually return
+a value there is no special meaning for the returned integer. It is just an
+incremental number for INCR, a UNIX time for LASTSAVE and so on.</p>
+
+<p>Some commands like EXISTS will return 1 for true and 0 for false.</p>
+
+<p>Other commands like SADD, SREM and SETNX will return 1 if the operation was
+actually done, 0 otherwise.</p>
+
+<p>The following commands will reply with an integer reply: SETNX, DEL, EXISTS,
+INCR, INCRBY, DECR, DECRBY, DBSIZE, LASTSAVE, RENAMENX, MOVE, LLEN, SADD, SREM,
+SISMEMBER, SCARD</p>
+
+<p><a name="nil-reply"></a>
+<a name="bulk-reply"></a></p>
+
+<h2>Bulk replies</h2>
+
+<p>Bulk replies are used by the server in order to return a single binary safe
+string.</p>
+
+<pre><code>C: GET mykey
+S: $6\r\nfoobar\r\n
+</code></pre>
+
+<p>The server sends as the first line a "$" byte followed by the number of bytes
+of the actual reply, followed by CRLF, then the actual data bytes are sent,
+followed by additional two bytes for the final CRLF.  The exact sequence sent
+by the server is:</p>
+
+<pre><code>"$6\r\nfoobar\r\n"
+</code></pre>
+
+<p>If the requested value does not exist the bulk reply will use the special
+value -1 as data length, example:</p>
+
+<pre><code>C: GET nonexistingkey
+S: $-1
+</code></pre>
+
+<p>The client library API should not return an empty string, but a nil object,
+when the requested object does not exist.  For example a Ruby library should
+return 'nil' while a C library should return NULL (or set a special flag in the
+reply object), and so forth.</p>
+
+<p><a name="multi-bulk-reply"></a></p>
+
+<h2>Multi-bulk replies</h2>
+
+<p>Commands like LRANGE need to return multiple values (every element of the list
+is a value, and LRANGE needs to return more than a single element). This is
+accomplished using multiple bulk writes, prefixed by an initial line indicating
+how many bulk writes will follow.  The first byte of a multi bulk reply is
+always <code>*</code>. Example:</p>
+
+<pre><code>C: LRANGE mylist 0 3
+s: *4
+s: $3
+s: foo
+s: $3
+s: bar
+s: $5
+s: Hello
+s: $5
+s: World
+</code></pre>
+
+<p>As you can see the multi bulk reply is exactly the same format used in order
+to send commands to the Redis server using the unified protocol.</p>
+
+<p>The first line the server sent is <code>*4\r\n</code> in order to specify that four bulk
+replies will follow. Then every bulk write is transmitted.</p>
+
+<p>If the specified key does not exist, the key is considered to hold an empty
+list and the value <code>0</code> is sent as multi bulk count. Example:</p>
+
+<pre><code>C: LRANGE nokey 0 1
+S: *0
+</code></pre>
+
+<p>When the <code>BLPOP</code> command times out, it returns the nil multi bulk reply. This
+type of multi bulk has count <code>-1</code> and should be interpreted as a nil value.
+Example:</p>
+
+<pre><code>C: BLPOP key 1
+S: *-1
+</code></pre>
+
+<p>A client library API <em>SHOULD</em> return a nil object and not an empty list when this
+happens. This is necessary to distinguish between an empty list and an error
+condition (for instance the timeout condition of the <code>BLPOP</code> command).</p>
+
+<h2>Nil elements in Multi-Bulk replies</h2>
+
+<p>Single elements of a multi bulk reply may have -1 length, in order to signal
+that this elements are missing and not empty strings. This can happen with the
+SORT command when used with the GET <em>pattern</em> option when the specified key is
+missing. Example of a multi bulk reply containing an empty element:</p>
+
+<pre><code>S: *3
+S: $3
+S: foo
+S: $-1
+S: $3
+S: bar
+</code></pre>
+
+<p>The second element is nul. The client library should return something like this:</p>
+
+<pre><code>["foo",nil,"bar"]
+</code></pre>
+
+<h2>Multiple commands and pipelining</h2>
+
+<p>A client can use the same connection in order to issue multiple commands.
+Pipelining is supported so multiple commands can be sent with a single
+write operation by the client, it is not needed to read the server reply
+in order to issue the next command. All the replies can be read at the end.</p>
+
+<p>Usually Redis server and client will have a very fast link so this is not
+very important to support this feature in a client implementation, still
+if an application needs to issue a very large number of commands in short
+time to use pipelining can be much faster.</p>
+
+<h2>The old protocol for sending commands</h2>
+
+<p>Before of the Unified Request Protocol Redis used a different protocol to send
+commands, that is still supported since it is simpler to type by hand via
+telnet. In this protocol there are two kind of commands:</p>
+
+<ul>
+<li>Inline commands: simple commands where arguments are just space separated
+strings. No binary safeness is possible.</li>
+<li>Bulk commands: bulk commands are exactly like inline commands, but the last
+argument is handled in a special way in order to allow for a binary-safe last
+argument.</li>
+</ul>
+
+
+<h2>Inline Commands</h2>
+
+<p>The simplest way to send Redis a command is via <strong>inline commands</strong>. The
+following is an example of a server/client chat using an inline command (the
+server chat starts with S:, the client chat with C:)</p>
+
+<pre><code>C: PING
+S: +PONG
+</code></pre>
+
+<p>The following is another example of an INLINE command returning an integer:</p>
+
+<pre><code>C: EXISTS somekey
+S: :0
+</code></pre>
+
+<p>Since 'somekey' does not exist the server returned ':0'.</p>
+
+<p>Note that the EXISTS command takes one argument. Arguments are separated
+by spaces.</p>
+
+<h2>Bulk commands</h2>
+
+<p>Some commands when sent as inline commands require a special form in order to
+support a binary safe last argument. This commands will use the last argument
+for a "byte count", then the bulk data is sent (that can be binary safe since
+the server knows how many bytes to read).</p>
+
+<p>See for instance the following example:</p>
+
+<pre><code>C: SET mykey 6
+C: foobar
+S: +OK
+</code></pre>
+
+<p>The last argument of the command is '6'. This specify the number of DATA bytes
+that will follow, that is, the string "foobar". Note that even this bytes are
+terminated by two additional bytes of CRLF.</p>
+
+<p>All the bulk commands are in this exact form: instead of the last argument the
+number of bytes that will follow is specified, followed by the bytes composing
+the argument itself, and CRLF. In order to be more clear for the programmer
+this is the string sent by the client in the above sample:</p>
+
+<pre><code>"SET mykey 6\r\nfoobar\r\n"
+</code></pre>
+
+<p>Redis has an internal list of what command is inline and what command is bulk,
+so you have to send this commands accordingly. It is strongly suggested to use
+the new Unified Request Protocol instead.</p>

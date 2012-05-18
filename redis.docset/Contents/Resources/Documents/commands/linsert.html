@@ -1,0 +1,21 @@
+<p>Inserts <code>value</code> in the list stored at <code>key</code> either before or after the
+reference value <code>pivot</code>.</p>
+
+<p>When <code>key</code> does not exist, it is considered an empty list and no operation is
+performed.</p>
+
+<p>An error is returned when <code>key</code> exists but does not hold a list value.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the length of the list after the insert operation, or <code>-1</code> when
+the value <code>pivot</code> was not found.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+RPUSH mylist "Hello"
+RPUSH mylist "World"
+LINSERT mylist BEFORE "World" "There"
+LRANGE mylist 0 -1
+</code></pre>

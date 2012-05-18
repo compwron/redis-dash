@@ -1,0 +1,15 @@
+<p>Returns the sorted set cardinality (number of elements) of the sorted set
+stored at <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@integer-reply: the cardinality (number of elements) of the sorted set, or <code>0</code>
+if <code>key</code> does not exist.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZCARD myzset
+</code></pre>

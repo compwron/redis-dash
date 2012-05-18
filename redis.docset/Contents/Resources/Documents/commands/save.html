@@ -1,0 +1,9 @@
+<p>The <code>SAVE</code> commands performs a <strong>synchronous</strong> save of the dataset producing a <em>point in time</em> snapshot of all the data inside the Redis instance, in the form of an RDB file.</p>
+
+<p>You almost never what to call <code>SAVE</code> in production environments where it will block all the other clients. Instead usually <code>BGSAVE</code> is used. However in case of issues preventing Redis to create the background saving child (for instance errors in the fork(2) system call), the <code>SAVE</code> command can be a good last resort to perform the dump of the latest dataset.</p>
+
+<p>For more information check the documentation <a href="/topics/persistence">describing how Redis persistence works</a> in details.</p>
+
+<p>@return</p>
+
+<p>@status-reply: The commands returns OK on success.</p>

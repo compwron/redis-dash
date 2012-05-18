@@ -1,0 +1,38 @@
+<p>Returns the specified range of elements in the sorted set stored at <code>key</code>. The
+elements are considered to be ordered from the lowest to the highest score.
+Lexicographical order is used for elements with equal score.</p>
+
+<p>See <code>ZREVRANGE</code> when you need the elements ordered from highest to lowest
+score (and descending lexicographical order for elements with equal score).</p>
+
+<p>Both <code>start</code> and <code>stop</code> are zero-based indexes, where <code>0</code> is the first element,
+<code>1</code> is the next element and so on. They can also be negative numbers indicating
+offsets from the end of the sorted set, with <code>-1</code> being the last element of the
+sorted set, <code>-2</code> the penultimate element and so on.</p>
+
+<p>Out of range indexes will not produce an error. If <code>start</code> is larger than the
+largest index in the sorted set, or <code>start &gt; stop</code>, an empty list is returned.
+If <code>stop</code> is larger than the end of the sorted set Redis will treat it like it
+is the last element of the sorted set.</p>
+
+<p>It is possible to pass the <code>WITHSCORES</code> option in order to return the scores of
+the elements together with the elements.  The returned list will contain
+<code>value1,score1,...,valueN,scoreN</code> instead of <code>value1,...,valueN</code>.  Client
+libraries are free to return a more appropriate data type (suggestion: an array
+with (value, score) arrays/tuples).</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: list of elements in the specified range (optionally with
+their scores).</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+ZADD myzset 1 "one"
+ZADD myzset 2 "two"
+ZADD myzset 3 "three"
+ZRANGE myzset 0 -1
+ZRANGE myzset 2 3
+ZRANGE myzset -2 -1
+</code></pre>

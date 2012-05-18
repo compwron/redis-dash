@@ -1,0 +1,15 @@
+<p>Returns all the members of the set value stored at <code>key</code>.</p>
+
+<p>This has the same effect as running <code>SINTER</code> with one argument <code>key</code>.</p>
+
+<p>@return</p>
+
+<p>@multi-bulk-reply: all elements of the set.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SADD myset "Hello"
+SADD myset "World"
+SMEMBERS myset
+</code></pre>

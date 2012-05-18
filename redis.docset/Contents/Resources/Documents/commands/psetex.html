@@ -1,0 +1,13 @@
+<p>@complexity</p>
+
+<p>O(1)</p>
+
+<p><code>PSETEX</code> works exactly like <code>SETEX</code> with the sole difference that the expire time is specified in milliseconds instead of seconds.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+PSETEX mykey 1000 "Hello"
+PTTL mykey
+GET mykey
+</code></pre>

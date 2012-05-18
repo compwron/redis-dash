@@ -1,0 +1,245 @@
+<h1>Transactions</h1>
+
+<p><code>MULTI</code>, <code>EXEC</code>, <code>DISCARD</code> and <code>WATCH</code> are the foundation of
+transactions in Redis.  They allow the execution of a group of commands
+in a single step, with two important guarantees:</p>
+
+<ul>
+<li><p>All the commands in a transaction are serialized and executed
+sequentially. It can never happen that a request issued by another
+client is served <strong>in the middle</strong> of the execution of a Redis
+transaction. This guarantees that the commands are executed as a single
+atomic operation.</p></li>
+<li><p>Either all of the commands or none are processed. The <code>EXEC</code> command
+triggers the execution of all the commands in the transaction, so
+if a client loses the connection to the server in the context of a
+transaction before calling the <code>MULTI</code> command none of the operations
+are performed, instead if the <code>EXEC</code> command is called, all the
+operations are performed. When using the
+<a href="/topics/persistence#append-only-file">append-only file</a> Redis makes sure
+to use a single write(2) syscall to write the transaction on disk.
+However if the Redis server crashes or is killed by the system administrator
+in some hard way it is possible that only a partial number of operations
+are registered. Redis will detect this condition at restart, and will exit with an error. Using the <code>redis-check-aof</code> tool it is possible to fix the
+append only file that will remove the partial transaction so that the
+server can start again.</p></li>
+</ul>
+
+
+<p>Redis 2.2 allows for an extra guarantee to the above two, in the form
+of optimistic locking in a way very similar to a check-and-set (CAS)
+operation. This is documented <a href="#cas">later</a> on this page.</p>
+
+<h2>Usage</h2>
+
+<p>A Redis transaction is entered using the <code>MULTI</code> command. The command
+always replies with <code>OK</code>. At this point the user can issue multiple
+commands. Instead of executing these commands, Redis will queue
+them. All the commands are executed once <code>EXEC</code> is called.</p>
+
+<p>Calling <code>DISCARD</code> instead will flush the transaction queue and will exit
+the transaction.</p>
+
+<p>The following example increments keys <code>foo</code> and <code>bar</code> atomically.</p>
+
+<pre><code>&gt; MULTI
+OK
+&gt; INCR foo
+QUEUED
+&gt; INCR bar
+QUEUED
+&gt; EXEC
+1) (integer) 1
+2) (integer) 1
+</code></pre>
+
+<p>As it is possible to see from the session above, <code>MULTI</code> returns an
+array of replies, where every element is the reply of a single command
+in the transaction, in the same order the commands were issued.</p>
+
+<p>When a Redis connection is in the context of a <code>MULTI</code> request,
+all commands will reply with the string <code>QUEUED</code> unless they are
+syntactically incorrect. Some commands are still allowed to fail during
+execution time.</p>
+
+<p>This is more clear on the protocol level. In the following example one
+command will fail when executed even if the syntax is right:</p>
+
+<pre><code>Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+MULTI
++OK
+SET a 3
+abc
++QUEUED
+LPOP a
++QUEUED
+EXEC
+*2
++OK
+-ERR Operation against a key holding the wrong kind of value
+</code></pre>
+
+<p><code>MULTI</code> returned two-element @bulk-reply where one is an <code>OK</code> code and
+the other an <code>-ERR</code> reply. It's up to the client library to find a
+sensible way to provide the error to the user.</p>
+
+<p>It's important to note that <strong>even when a command fails, all the other
+commands in the queue are processed</strong> – Redis will <em>not</em> stop the
+processing of commands.</p>
+
+<p>Another example, again using the wire protocol with <code>telnet</code>, shows how
+syntax errors are reported ASAP instead:</p>
+
+<pre><code>MULTI
++OK
+INCR a b c
+-ERR wrong number of arguments for 'incr' command
+</code></pre>
+
+<p>This time due to the syntax error the bad <code>INCR</code> command is not queued
+at all.</p>
+
+<h2>Errors inside a transaction</h2>
+
+<p>If you have a relational databases background, the fact that Redis commands
+can fail during a transaction, but still Redis will execute the rest of the
+transaction instead of rolling back, may look odd to you.</p>
+
+<p>However there are good opinions for this behavior:</p>
+
+<ul>
+<li>Redis commands can fail only if called with a wrong syntax, or against keys holding the wrong data type: this means that in practical terms a failing command is the result of a programming errors, and a kind of error that is very likely to be detected during development, and not in production.</li>
+<li>Redis is internally simplified and faster because it does not need the ability to roll back.</li>
+</ul>
+
+
+<p>An argument against Redis point of view is that bugs happen, however it should be noted that in general the roll back does not save you from programming errors. For instance if a query increments a key by 2 instead of 1, or increments the wrong key, there is no way for a rollback mechanism to help. Given that no one can save the programmer from his errors, and that the kind of errors required for a Redis command to fail are unlikely to enter in production, we selected the simpler and faster approach of not supporting roll backs on errors.</p>
+
+<h2>Discarding the command queue</h2>
+
+<p><code>DISCARD</code> can be used in order to abort a transaction. In this case, no
+commands are executed and the state of the connection is restored to
+normal.</p>
+
+<pre><code>&gt; SET foo 1
+OK
+&gt; MULTI
+OK
+&gt; INCR foo
+QUEUED
+&gt; DISCARD
+OK
+&gt; GET foo
+"1"
+</code></pre>
+
+<p><a name="cas"></a></p>
+
+<h2>Optimistic locking using check-and-set</h2>
+
+<p><code>WATCH</code> is used to provide a check-and-set (CAS) behavior to Redis
+transactions.</p>
+
+<p><code>WATCH</code>ed keys are monitored in order to detect changes against them. If
+at least one watched key is modified before the <code>EXEC</code> command, the
+whole transaction aborts, and <code>EXEC</code> returns a @nil-reply to notify that
+the transaction failed.</p>
+
+<p>For example, imagine we have the need to atomically increment the value
+of a key by 1 (let's suppose Redis doesn't have <code>INCR</code>).</p>
+
+<p>The first try may be the following:</p>
+
+<pre><code>val = GET mykey
+val = val + 1
+SET mykey $val
+</code></pre>
+
+<p>This will work reliably only if we have a single client performing the
+operation in a given time. If multiple clients try to increment the key
+at about the same time there will be a race condition. For instance,
+client A and B will read the old value, for instance, 10. The value will
+be incremented to 11 by both the clients, and finally <code>SET</code> as the value
+of the key. So the final value will be 11 instead of 12.</p>
+
+<p>Thanks to <code>WATCH</code> we are able to model the problem very well:</p>
+
+<pre><code>WATCH mykey
+val = GET mykey
+val = val + 1
+MULTI
+SET mykey $val
+EXEC
+</code></pre>
+
+<p>Using the above code, if there are race conditions and another client
+modifies the result of <code>val</code> in the time between our call to <code>WATCH</code> and
+our call to <code>EXEC</code>, the transaction will fail.</p>
+
+<p>We just have to repeat the operation hoping this time we'll not get a
+new race. This form of locking is called <em>optimistic locking</em> and is
+a very powerful form of locking. In many use cases, multiple clients
+will be accessing different keys, so collisions are unlikely – usually
+there's no need to repeat the operation.</p>
+
+<h2><code>WATCH</code> explained</h2>
+
+<p>So what is <code>WATCH</code> really about? It is a command that will
+make the <code>EXEC</code> conditional: we are asking Redis to perform
+the transaction only if no other client modified any of the
+<code>WATCH</code>ed keys. Otherwise the transaction is not entered at
+all. (Note that if you <code>WATCH</code> a volatile key and Redis expires
+the key after you <code>WATCH</code>ed it, <code>EXEC</code> will still work. <a href="http://code.google.com/p/redis/issues/detail?id=270">More on
+this</a>.)</p>
+
+<p><code>WATCH</code> can be called multiple times. Simply all the <code>WATCH</code> calls will
+have the effects to watch for changes starting from the call, up to
+the moment <code>EXEC</code> is called. You can also send any number of keys to a
+single <code>WATCH</code> call.</p>
+
+<p>When <code>EXEC</code> is called, all keys are <code>UNWATCH</code>ed, regardless of whether
+the transaction was aborted or not.  Also when a client connection is
+closed, everything gets <code>UNWATCH</code>ed.</p>
+
+<p>It is also possible to use the <code>UNWATCH</code> command (without arguments)
+in order to flush all the watched keys. Sometimes this is useful as we
+optimistically lock a few keys, since possibly we need to perform a
+transaction to alter those keys, but after reading the current content
+of the keys we don't want to proceed.  When this happens we just call
+<code>UNWATCH</code> so that the connection can already be used freely for new
+transactions.</p>
+
+<h3>Using <code>WATCH</code> to implement ZPOP</h3>
+
+<p>A good example to illustrate how <code>WATCH</code> can be used to create new
+atomic operations otherwise not supported by Redis is to implement ZPOP,
+that is a command that pops the element with the lower score from a
+sorted set in an atomic way. This is the simplest implementation:</p>
+
+<pre><code>WATCH zset
+element = ZRANGE zset 0 0
+MULTI
+ZREM zset element
+EXEC
+</code></pre>
+
+<p>If <code>EXEC</code> fails (i.e. returns a @nil-reply) we just repeat the operation.</p>
+
+<h2>Redis scripting and transactions</h2>
+
+<p>A <a href="/commands/eval">Redis script</a> is transactional by definition, so everything
+you can do with a Redis transaction, you can also do with a script, and
+usually the script will be both simpler and faster.</p>
+
+<p>This duplication is due to the fact that scripting was introduced in Redis 2.6
+while transactions already existed long before. However we are unlikely to
+remove the support for transactions in the short time because it seems
+semantically opportune that even without resorting to Redis scripting it is
+still possible to avoid race conditions, especially since the implementation
+complexity of Redis transactions is minimal.</p>
+
+<p>However it is not impossible that in a non immediate future we'll see that the
+whole user base is just using scripts. If this happens we may deprecate and
+finally remove transactions.</p>
