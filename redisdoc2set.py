@@ -20,7 +20,7 @@ for docpath in docpaths:
         name = os.path.splitext(fn)[0].strip()
         typ = os.path.split(docpath)[1].strip() 
         
-        if len(name) > 0:
+        if len(name) > 0 and name != 'whos-using-redis':
             if typ == 'commands': name = name.upper()  # Uppercase command names as in the Redis docs 
             cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'clm', '%s/%s' % (typ,fn)))
             print 'name: %s, path: %s/%s' % (name, typ, fn)
