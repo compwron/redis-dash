@@ -16,8 +16,9 @@ docpaths = ['redis.docset/Contents/Resources/Documents/commands', 'redis.docset/
 for docpath in docpaths:
     for fn in os.listdir(docpath):
         # Add page names 
-        name = os.path.splitext(fn)[0]
-        typ = os.path.split(docpath)[1] 
+        fn = fn.strip()
+        name = os.path.splitext(fn)[0].strip()
+        typ = os.path.split(docpath)[1].strip() 
         
         if typ == 'commands': name = name.upper()  # Uppercase command names 
         cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'clm', '%s/%s' % (typ,fn)))
