@@ -1,14 +1,11 @@
 <TITLE>Redis: problems</TITLE>
-<TITLE>Redis: problems</TITLE>
-<TITLE>Redis: problems</TITLE>
-<TITLE>problems</TITLE>
 <h1>Problems with Redis? This is a good starting point.</h1>
 
 <p>This page tries to help you about what to do if you have issues with Redis. Part of the Redis project is helping people that are experiencing problems because we don't like to let people alone with their issues.</p>
 
 <ul>
-<li>If you have <strong>latency problems</strong> with Redis, that in some way appears to be idle for some time, read our <a href="/topics/latency">Redis latency trubleshooting guide</a>.</li>
-<li>Redis stable releases are usually very reliable, however in the rare event you are <strong>experiencing crashes</strong> the developers can help a lot more if you provide debugging informations. Please read our <a href="/topics/debugging">Debugging Redis guide</a>.</li>
+<li>If you have <strong>latency problems</strong> with Redis, that in some way appears to be idle for some time, read our <a href="../topics/latency.html">Redis latency trubleshooting guide</a>.</li>
+<li>Redis stable releases are usually very reliable, however in the rare event you are <strong>experiencing crashes</strong> the developers can help a lot more if you provide debugging informations. Please read our <a href="../topics/debugging.html">Debugging Redis guide</a>.</li>
 <li>It happened multiple times that users experiencing problems with Redis actually had a server with <strong>broken RAM</strong>. Please test your RAM using <strong>redis-server --test-memory</strong> in case Redis is not stable in your system. Redis built-in memory test is fast and reasonably reliable, but if you can you should reboot your server and use <a href="http://memtest86.com">memtest86</a>.</li>
 </ul>
 
@@ -49,6 +46,6 @@
 
 <ul>
 <li>Ubuntu 10.04 and 10.10 have serious bugs (especially 10.10) that cause slow downs if not just instance hangs. Please move away from the default kernels shipped with this distributions. <a href="https://silverline.librato.com/blog/main/EC2_Users_Should_be_Cautious_When_Booting_Ubuntu_10_04_AMIs">Link to 10.04 bug</a>. <a href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/666211">Link to 10.10 bug</a>. Both bugs were reported many times in the context of EC2 instances, but other users confirmed that also native servers are affected (at least by one of the two).</li>
-<li>Certain versions of the Xen hypervisor are known to have very bad fork() performances. See <a href="/topics/latency">the latency page</a> for more information.</li>
+<li>Certain versions of the Xen hypervisor are known to have very bad fork() performances. See <a href="../topics/latency.html">the latency page</a> for more information.</li>
 </ul>
 

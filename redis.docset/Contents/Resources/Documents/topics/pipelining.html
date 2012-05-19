@@ -1,7 +1,4 @@
 <TITLE>Redis: pipelining</TITLE>
-<TITLE>Redis: pipelining</TITLE>
-<TITLE>Redis: pipelining</TITLE>
-<TITLE>pipelining</TITLE>
 <h1>Request/Response protocols and RTT</h1>
 
 <p>Redis is a TCP server using the client-server model and what is called a <em>Request/Response</em> protocol.</p>
@@ -115,6 +112,6 @@ with pipelining 0.250783 seconds
 
 <h2>Pipelining VS Scripting</h2>
 
-<p>Using <a href="/commands/eval">Redis scripting</a> (available in Redis version 2.6 or greater) a number of use cases for pipelining can be addressed more efficiently using scripts that perform a lot of the work needed server side. A big advantage of scripting is that it is able to both read and write data with minimal latency, making operations like <em>read, compute, write</em> very fast (pipelining can't help in this scenario since the client needs the reply of the read command before it can call the write command).</p>
+<p>Using <a href="../commands/eval.html">Redis scripting</a> (available in Redis version 2.6 or greater) a number of use cases for pipelining can be addressed more efficiently using scripts that perform a lot of the work needed server side. A big advantage of scripting is that it is able to both read and write data with minimal latency, making operations like <em>read, compute, write</em> very fast (pipelining can't help in this scenario since the client needs the reply of the read command before it can call the write command).</p>
 
 <p>Sometimes the application may also want to send <code>EVAL</code> or <code>EVALSHA</code> commands in a pipeline. This is entirely possible and Redis explicitly supports it with the <a href="http://redis.io/commands/script-load">SCRIPT LOAD</a> command (it guarantees that <code>EVALSHA</code> can be called without the risk of failing).</p>

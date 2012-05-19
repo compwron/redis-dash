@@ -13,6 +13,7 @@ cur.execute('CREATE UNIQUE INDEX anchor ON searchIndex (name, type, path);')
 
 docpaths = ['redis.docset/Contents/Resources/Documents/commands', 'redis.docset/Contents/Resources/Documents/topics'] 
 
+any = re.compile('.*')
 for docpath in docpaths:
     for fn in os.listdir(docpath):
         
@@ -21,14 +22,29 @@ for docpath in docpaths:
         typ = os.path.split(docpath)[1].strip() 
         if typ == 'commands': name = name.upper()  # Uppercase command names as in the Redis docs 
         
-        # Add title tags to pages
         html = open('%s/%s' % (docpath, fn),'r').read()
-        html = '<TITLE>Redis: %s</TITLE>\n%s' % (name, html)
+
+        # Add title tags to pages
+        if '<TITLE>' not in html.upper():
+            html = '<TITLE>Redis: %s</TITLE>\n%s' % (name, html)
+        
+        # Change links to relative paths
+        html = re.sub("href=\"/(commands|topics)/(\\w+)(#?[-\\w]*)\"", "href=\"../\\1/\\2.html\\3\"", html)
+        
         open('%s/%s' % (docpath, fn),'w').write(html)
 
         if len(name) > 0 and name not in ('sponsors', 'whos-using-redis'):
-            cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'clm', '%s/%s' % (typ,fn)))
+            path = '%s/%s' % (typ, fn)
+            cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'clm', path))
             print 'name: %s, path: %s/%s' % (name, typ, fn)
-        
+            
+            soup = BeautifulSoup(html)
+            for tag in soup.find_all('a', {'name':any}):
+                name = tag.attrs['name'].strip("'")
+                path = '%s/%s#%s' % (typ, fn, name)
+                cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'instp', path))
+                print '  name: %s, path: %s' % (name, path)
+ 
+       
 db.commit()
 db.close()

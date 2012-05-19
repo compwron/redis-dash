@@ -1,7 +1,4 @@
 <TITLE>Redis: CONFIG SET</TITLE>
-<TITLE>Redis: CONFIG SET</TITLE>
-<TITLE>Redis: config set</TITLE>
-<TITLE>config set</TITLE>
 <p>The <code>CONFIG SET</code> command is used in order to reconfigure the server at runtime
 without the need to restart Redis. You can change both trivial parameters or
 switch from one to another persistence option using this command.</p>
@@ -36,7 +33,7 @@ datasets, should be set using <code>CONFIG SET</code> as "900 1 300 10".</p>
 
 <p>It is possible to switch persistence form .rdb snapshotting to append only file
 (and the other way around) using the <code>CONFIG SET</code> command. For more information
-about how to do that please check <a href="/topics/persistence">persistence page</a>.</p>
+about how to do that please check <a href="../topics/persistence.html">persistence page</a>.</p>
 
 <p>In general what you should know is that setting the <em>appendonly</em> parameter to
 <em>yes</em> will start a background process to save the initial append only file

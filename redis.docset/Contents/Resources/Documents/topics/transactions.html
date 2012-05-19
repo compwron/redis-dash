@@ -1,7 +1,4 @@
 <TITLE>Redis: transactions</TITLE>
-<TITLE>Redis: transactions</TITLE>
-<TITLE>Redis: transactions</TITLE>
-<TITLE>transactions</TITLE>
 <h1>Transactions</h1>
 
 <p><code>MULTI</code>, <code>EXEC</code>, <code>DISCARD</code> and <code>WATCH</code> are the foundation of
@@ -20,7 +17,7 @@ if a client loses the connection to the server in the context of a
 transaction before calling the <code>MULTI</code> command none of the operations
 are performed, instead if the <code>EXEC</code> command is called, all the
 operations are performed. When using the
-<a href="/topics/persistence#append-only-file">append-only file</a> Redis makes sure
+<a href="../topics/persistence.html#append-only-file">append-only file</a> Redis makes sure
 to use a single write(2) syscall to write the transaction on disk.
 However if the Redis server crashes or is killed by the system administrator
 in some hard way it is possible that only a partial number of operations
@@ -233,7 +230,7 @@ EXEC
 
 <h2>Redis scripting and transactions</h2>
 
-<p>A <a href="/commands/eval">Redis script</a> is transactional by definition, so everything
+<p>A <a href="../commands/eval.html">Redis script</a> is transactional by definition, so everything
 you can do with a Redis transaction, you can also do with a script, and
 usually the script will be both simpler and faster.</p>
 

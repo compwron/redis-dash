@@ -1,7 +1,4 @@
 <TITLE>Redis: introduction</TITLE>
-<TITLE>Redis: introduction</TITLE>
-<TITLE>Redis: introduction</TITLE>
-<TITLE>introduction</TITLE>
 <h1>Introduction to Redis</h1>
 
 <p>Redis is an open source, advanced <strong>key-value store</strong>.  It
@@ -12,25 +9,25 @@ keys can contain <a href="/topics/data-types#strings">strings</a>,
 sets</a>.</p>
 
 <p>You can run <strong>atomic operations</strong>
-on these types, like <a href="/commands/append">appending to a string</a>;
-<a href="/commands/hincrby">incrementing the value in a hash</a>; <a href="/commands/lpush">pushing to a
-list</a>; <a href="/commands/sinter">computing set intersection</a>,
-<a href="/commands/sunion">union</a> and <a href="/commands/sdiff">difference</a>;
-or <a href="/commands/zrangebyscore">getting the member with highest ranking in a sorted
+on these types, like <a href="../commands/append.html">appending to a string</a>;
+<a href="../commands/hincrby.html">incrementing the value in a hash</a>; <a href="../commands/lpush.html">pushing to a
+list</a>; <a href="../commands/sinter.html">computing set intersection</a>,
+<a href="../commands/sunion.html">union</a> and <a href="../commands/sdiff.html">difference</a>;
+or <a href="../commands/zrangebyscore.html">getting the member with highest ranking in a sorted
 set</a>.</p>
 
 <p>In order to achieve its outstanding performance, Redis works with an
 <strong>in-memory dataset</strong>. Depending on your use case, you can persist it either
-by <a href="/topics/persistence#snapshotting">dumping the dataset to disk</a>
-every once in a while, or by <a href="/topics/persistence#append-only-file">appending each command to a
+by <a href="../topics/persistence.html#snapshotting">dumping the dataset to disk</a>
+every once in a while, or by <a href="../topics/persistence.html#append-only-file">appending each command to a
 log</a>.</p>
 
-<p>Redis also supports trivial-to-setup <a href="/topics/replication">master-slave
+<p>Redis also supports trivial-to-setup <a href="../topics/replication.html">master-slave
 replication</a>, with very fast non-blocking first
 synchronization, auto-reconnection on net split and so forth.</p>
 
-<p>Other features include a simple <a href="/topics/transactions">check-and-set
-mechanism</a>, <a href="/topics/pubsub">pub/sub</a>
+<p>Other features include a simple <a href="../topics/transactions.html">check-and-set
+mechanism</a>, <a href="../topics/pubsub.html">pub/sub</a>
 and configuration settings to make Redis behave like a
 cache.</p>
 

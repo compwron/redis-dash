@@ -1,7 +1,4 @@
 <TITLE>Redis: admin</TITLE>
-<TITLE>Redis: admin</TITLE>
-<TITLE>Redis: admin</TITLE>
-<TITLE>admin</TITLE>
 <h1>Redis Administration</h1>
 
 <p>This page contains topics related to the administration of Redis instances.
@@ -10,7 +7,7 @@ Every topic is self contained in form of a FAQ. New topics will be created in th
 <h2>Upgrading or restarting a Redis instance without downtime</h2>
 
 <p>Redis is designed to be a very long running process in your server.
-For instance many configuration options can be modified without any kind of restart using the <a href="/commands/config-set">CONFIG SET command</a>.</p>
+For instance many configuration options can be modified without any kind of restart using the <a href="../commands/config.html-set">CONFIG SET command</a>.</p>
 
 <p>Starting from Redis 2.2 it is even possible to switch from AOF to RDB snapshots persistence or the other way around without restarting Redis. Check the output of the 'CONFIG GET *' command for more information.</p>
 
@@ -24,6 +21,6 @@ For instance many configuration options can be modified without any kind of rest
 <li>Wait for the replication initial synchronization to complete (check the slave log file).</li>
 <li>Make sure using INFO that there are the same number of keys in the master and in the slave. Check with redis-cli that the slave is working as you wish and is replying to your commands.</li>
 <li>Configure all your clients in order to use the new instance (that is, the slave).</li>
-<li>Once you are sure that the master is no longer receiving any query (you can check this with the <a href="/commands/monitor">MONITOR command</a>), elect the slave to master using the <strong>SLAVEOF NO ONE</strong> command, and shut down your master.</li>
+<li>Once you are sure that the master is no longer receiving any query (you can check this with the <a href="../commands/monitor.html">MONITOR command</a>), elect the slave to master using the <strong>SLAVEOF NO ONE</strong> command, and shut down your master.</li>
 </ul>
 

@@ -1,7 +1,4 @@
 <TITLE>Redis: data-types</TITLE>
-<TITLE>Redis: data-types</TITLE>
-<TITLE>Redis: data-types</TITLE>
-<TITLE>data-types</TITLE>
 <h1>Data types</h1>
 
 <p><a name="strings"></a></p>
@@ -16,10 +13,10 @@ JPEG image or a serialized Ruby object.</p>
 <p>You can do a number of interesting things using strings in Redis, for instance you can:</p>
 
 <ul>
-<li>Use Strings as atomic counters using commands in the INCR family: <a href="/commands/incr">INCR</a>, <a href="/commands/decr">DECR</a>, <a href="/commands/incrby">INCRBY</a>.</li>
-<li>Append to strings with the <a href="/commands/append">APPEND</a> command.</li>
-<li>Use Strings as a random access vectors with <a href="/commands/getrange">GETRANGE</a> and <a href="/commands/setrange">SETRANGE</a>.</li>
-<li>Encode a lot of data in little space, or create a Redis backed Bloom Filter using <a href="/commands/getbit">GETBIT</a> and <a href="/commands/setbit">SETBIT</a>.</li>
+<li>Use Strings as atomic counters using commands in the INCR family: <a href="../commands/incr.html">INCR</a>, <a href="../commands/decr.html">DECR</a>, <a href="../commands/incrby.html">INCRBY</a>.</li>
+<li>Append to strings with the <a href="../commands/append.html">APPEND</a> command.</li>
+<li>Use Strings as a random access vectors with <a href="../commands/getrange.html">GETRANGE</a> and <a href="../commands/setrange.html">SETRANGE</a>.</li>
+<li>Encode a lot of data in little space, or create a Redis backed Bloom Filter using <a href="../commands/getbit.html">GETBIT</a> and <a href="../commands/setbit.html">SETBIT</a>.</li>
 </ul>
 
 
@@ -32,8 +29,8 @@ JPEG image or a serialized Ruby object.</p>
 <p>Redis Lists are simply lists of strings, sorted by insertion order.
 It is possible to add elements to a Redis List pushing new elements on the head  (on the left) or on the tail (on the right) of the list.</p>
 
-<p>The <a href="/commands/lpush">LPUSH</a> command inserts a new element on the head, while
-<a href="/commands/rpush">RPUSH</a> inserts a new element on the tail. A new list is created
+<p>The <a href="../commands/lpush.html">LPUSH</a> command inserts a new element on the head, while
+<a href="../commands/rpush.html">RPUSH</a> inserts a new element on the tail. A new list is created
 when one of this operations is performed against an empty key.
 Similarly the key is removed from the key space if a list operation will
 empty the list. These are very handy semantics since all the list commands will
@@ -59,10 +56,10 @@ an O(N) operation.</p>
 <p>You can do many interesting things with Redis Lists, for instance you can:</p>
 
 <ul>
-<li>Model a timeline in a social network, using <a href="/commands/lpush">LPUSH</a> in order to add new elements in the user time line, and using <a href="/commands/lrange">LRANGE</a> in order to retrieve a few of recently inserted items.</li>
-<li>You can use <a href="/commands/lpush">LPUSH</a> together with <a href="/commands/ltrim">LTRIM</a> to create a list that never exceeds a given number of elements, but just remembers the latest N elements.</li>
+<li>Model a timeline in a social network, using <a href="../commands/lpush.html">LPUSH</a> in order to add new elements in the user time line, and using <a href="../commands/lrange.html">LRANGE</a> in order to retrieve a few of recently inserted items.</li>
+<li>You can use <a href="../commands/lpush.html">LPUSH</a> together with <a href="../commands/ltrim.html">LTRIM</a> to create a list that never exceeds a given number of elements, but just remembers the latest N elements.</li>
 <li>Lists can be used as a message passing primitive, See for instance the well known <a href="https://github.com/defunkt/resque">Resque</a> Ruby library for creating background jobs.</li>
-<li>You can do a lot more with lists, this data type supports a number of commands, including blocking commands like <a href="/commands/blpop">BLPOP</a>. Please check all the <a href="/commands#list">available commands operating on lists</a> for more information.</li>
+<li>You can do a lot more with lists, this data type supports a number of commands, including blocking commands like <a href="../commands/blpop.html">BLPOP</a>. Please check all the <a href="/commands#list">available commands operating on lists</a> for more information.</li>
 </ul>
 
 
@@ -85,9 +82,9 @@ can do unions, intersections, differences of sets in very short time.</p>
 <p>You can do many interesting things using Redis Sets, for instance you can:</p>
 
 <ul>
-<li>You can track unique things using Redis Sets. Want to know all the unique IP addresses visiting a given blog post? Simply use <a href="/commands/sadd">SADD</a> every time you process a page view. You are sure repeated IPs will not be inserted.</li>
-<li>Redis Sets are good to represent relations. You can create a tagging system with Redis using a Set to represent every tag. Then you can add all the IDs of all the objects having a given tag into a Set representing this particular tag, using the <a href="/commands/sadd">SADD</a> command. Do you want all the IDs of all the Objects having a three different tags at the same time? Just use <a href="/commands/sinter">SINTER</a>.</li>
-<li>You can use Sets to extract elements at random using the <a href="/commands/spop">SPOP</a> or <a href="/commands/srandmember">SRANDMEMBER</a> commands.</li>
+<li>You can track unique things using Redis Sets. Want to know all the unique IP addresses visiting a given blog post? Simply use <a href="../commands/sadd.html">SADD</a> every time you process a page view. You are sure repeated IPs will not be inserted.</li>
+<li>Redis Sets are good to represent relations. You can create a tagging system with Redis using a Set to represent every tag. Then you can add all the IDs of all the objects having a given tag into a Set representing this particular tag, using the <a href="../commands/sadd.html">SADD</a> command. Do you want all the IDs of all the Objects having a three different tags at the same time? Just use <a href="../commands/sinter.html">SINTER</a>.</li>
+<li>You can use Sets to extract elements at random using the <a href="../commands/spop.html">SPOP</a> or <a href="../commands/srandmember.html">SRANDMEMBER</a> commands.</li>
 <li>As usually check the <a href="/commands#set">full list of Set commands</a> for more information.</li>
 </ul>
 
@@ -141,13 +138,13 @@ that are really hard to model in other kind of databases.</p>
 
 <ul>
 <li>Take a leader board in a massive online game, where every time a new score
-is submitted you update it using <a href="/commands/zadd">ZADD</a>. You can easily
-take the top users using <a href="/commands/zrange">ZRANGE</a>, you can also, given an
-user name, return its rank in the listing using <a href="/commands/zrank">ZRANK</a>.
+is submitted you update it using <a href="../commands/zadd.html">ZADD</a>. You can easily
+take the top users using <a href="../commands/zrange.html">ZRANGE</a>, you can also, given an
+user name, return its rank in the listing using <a href="../commands/zrank.html">ZRANK</a>.
 Using ZRANK and ZRANGE together you can show users with a score similar to
 a given user. All very <em>quickly</em>.</li>
 <li>Sorted Sets are often used in order to index data that is stored inside Redis.
-For instance if you have many hashes representing users, you can use a sorted set with elements having the age of the user as the score and the ID of the user as the value. So using <a href="/commands/zrangebyscore">ZRANGEBYSCORE</a> it will be trivial and fast to retrieve all the users with a given interval of ages.</li>
+For instance if you have many hashes representing users, you can use a sorted set with elements having the age of the user as the score and the ID of the user as the value. So using <a href="../commands/zrangebyscore.html">ZRANGEBYSCORE</a> it will be trivial and fast to retrieve all the users with a given interval of ages.</li>
 <li>Sorted Sets are probably the most advanced Redis data types, so take some time to check the <a href="/commands#sorted_set">full list of Sorted Set commands</a> to discover what you can do with Redis!</li>
 </ul>
 
