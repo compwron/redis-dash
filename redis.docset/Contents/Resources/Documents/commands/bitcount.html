@@ -1,0 +1,64 @@
+<TITLE>Redis: BITCOUNT</TITLE>
+<p>Count the number of set bits (population counting) in a string.</p>
+
+<p>By default all the bytes contained in the string are examined. It is possible
+to specifiy the counting operation only in an interval passing the additional
+arguments <em>start</em> and <em>end</em>.</p>
+
+<p>Like for the <code>GETRANGE</code> command start and end can contain negative values
+in order to index bytes starting from the end of the string, where -1 is the
+last byte, -2 is the penultimate, and so forth.</p>
+
+<p>Non existing keys are treated as empty strings, so the command will return
+zero.</p>
+
+<p>@return</p>
+
+<p>@integer-reply</p>
+
+<p>The number of bits set to 1.</p>
+
+<p>@examples</p>
+
+<pre><code>@cli
+SET mykey "foobar"
+BITCOUNT mykey
+BITCOUNT mykey 0 0
+BITCOUNT mykey 1 1
+</code></pre>
+
+<h2>Pattern: real time metrics using bitmaps</h2>
+
+<p>Bitmaps are a very space efficient representation of certain kinds of
+information. One example is a web application that needs the history
+of user visits, so that for instance it is possible to determine what
+users are good targets of beta features, or for any other purpose.</p>
+
+<p>Using the <code>SETBIT</code> command this is trivial to accomplish, identifying every
+day with a small progressive integer. For instance day 0 is the first day
+the application was put online, day 1 the next day, and so forth.</p>
+
+<p>Every time an user performs a page view, the application can register that
+in the current day the user visited the web site using the <code>SETBIT</code> command
+setting the bit corresponding to the current day.</p>
+
+<p>Later it will be trivial to know the number of single days the user visited
+the web site simply calling the <code>BITCOUNT</code> command against the bitmap.</p>
+
+<p>A similar pattern where user IDs are used instead of days is described
+in the article <a href="http://blog.getspool.com/2011/11/29/fast-easy-realtime-metrics-using-redis-bitmaps/">Fast easy realtime metrics usign Redis bitmaps</a>.</p>
+
+<h2>Performance considerations</h2>
+
+<p>In the above example of counting days, even after 10 years the application
+is online we still have just <code>365*10</code> bits of data per user, that is
+just 456 bytes per user. With this amount of data <code>BITCOUNT</code> is still as fast
+as any other O(1) Redis command like <code>GET</code> or <code>INCR</code>.</p>
+
+<p>When the bitmap is big, there are two alternatives:</p>
+
+<ul>
+<li>Taking a separated key that is incremented every time the bitmap is modified. This can be very efficient and atomic using a small Redis Lua script.</li>
+<li>Running the bitmap incrementally using the <code>BITCOUNT</code> <em>start</em> and <em>end</em> optional parameters, accumulating the results client-side, and optionally caching the result into a key.</li>
+</ul>
+

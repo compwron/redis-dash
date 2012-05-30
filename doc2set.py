@@ -1,7 +1,6 @@
-#!/usr/local/bin/python
-
+#!/usr/bin/env python
 import os, re, sqlite3
-from bs4 import BeautifulSoup, NavigableString, Tag 
+from bs4 import BeautifulSoup
 
 db = sqlite3.connect('redis.docset/Contents/Resources/docSet.dsidx')
 cur = db.cursor()
