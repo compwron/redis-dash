@@ -4,6 +4,20 @@
 <p>This page contains topics related to the administration of Redis instances.
 Every topic is self contained in form of a FAQ. New topics will be created in the future.</p>
 
+<h2>Redis setup hints</h2>
+
+<ul>
+<li>We suggest deploying Redis using the <strong>Linux operating system</strong>. Redis is also tested heavily on osx, and tested from time to time on FreeBSD and OpenBSD systems. However Linux is where we do all the major stress testing, and where most production deployments are working.</li>
+<li>Make sure to set the Linux kernel <strong>overcommit memory setting to 1</strong>. Add <code>vm.overcommit_memory = 1</code> to <code>/etc/sysctl.conf</code> and then reboot or run the command <code>sysctl vm.overcommit_memory=1</code> for this to take effect immediately.</li>
+<li>Make sure to <strong>setup some swap</strong> in your system (we suggest as much as swap as memory). If Linux does not have swap and your Redis instance accidentally consumes too much memory, either Redis will crash for out of memory or the Linux kernel OOM killer will kill the Redis process.</li>
+<li>If you are using Redis in a very write-heavy application, while saving an RDB file on disk or rewriting the AOF log <strong>Redis may use up to 2 times the memory normally used</strong>. The additional memory used is proportional to the number of memory pages modified by writes during the saving process, so it is often proportional to the number of keys (or aggregate types items) touched during this time. Make sure to size your memory accordingly.</li>
+<li>Even if you have persistence disabled, Redis will need to perform RDB saves if you use replication.</li>
+<li>The use of Redis persistence with <strong>EC2 EBS volumes is discouraged</strong> since EBS performance is usually poor. Use ephemeral storage to persist and then move your persistence files to EBS when possible.</li>
+<li>If you are deploying using a virtual machine that uses the <strong>Xen hypervisor you may experience slow fork() times</strong>. This may block Redis from a few milliseconds up to a few seconds depending on the dataset size. Check the <a href="../topics/latency.html">latency page</a> for more information. This problem is not common to other hypervisors.</li>
+<li>Use <code>daemonize no</code> when run under daemontools.</li>
+</ul>
+
+
 <h2>Upgrading or restarting a Redis instance without downtime</h2>
 
 <p>Redis is designed to be a very long running process in your server.
