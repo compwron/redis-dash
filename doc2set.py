@@ -35,7 +35,7 @@ for docpath in docpaths:
 
         if len(name) > 0 and name not in ('sponsors', 'whos-using-redis'):
             path = '%s/%s' % (typ, fn)
-            cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'clm', path))
+            cur.execute('INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)', (name, 'func', path))
             print 'name: %s, path: %s/%s' % (name, typ, fn)
             
             soup = BeautifulSoup(html)
